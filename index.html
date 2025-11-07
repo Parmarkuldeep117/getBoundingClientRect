@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .box {
+            border: 2px solid;
+            height: 200px;
+            width: 200px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"
+        integrity="sha512-NcZdtrT77bJr4STcmsGAESr06BYGE8woZdSdEgqnpyqac7sugNO+Tr4bGwGF3MsnEkGKhU2KL2xh6Ec+BqsaHA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+
+        let rect = document.querySelector(".box")
+        gsap.to(".box", {
+            rotate: 360,
+            duration: 2,
+            ease: "linear",
+            repeat: -1,
+            borderRadius: 50,
+        });
+        rect.addEventListener("mousemove", (e) => {
+          
+            let rectlocation = rect.getBoundingClientRect();
+            let rectval = Math.round(e.clientX - rectlocation.left);
+            if (rectval < rectlocation.width / 2) {
+                let redcolor = gsap.utils.mapRange(0, (rectlocation.width / 2), 255, 0, rectval)
+                gsap.to(".box", {
+                    backgroundColor: `rgb(${redcolor} , 0, 0)`
+                })
+            }
+            else {
+                let bluecolor = gsap.utils.mapRange(rectlocation.width / 2, rectlocation.width, 0, 255, rectval)
+                gsap.to(".box", {
+                    backgroundColor: `rgb(0,0,${bluecolor})`
+                })
+            }
+
+            if (rectval === rectlocation.width / 2) {
+                let greencolor = gsap.utils.mapRange(rectlocation.width / 2, rectlocation.width / 2, 255, 255, rectval)
+                gsap.to(".box", {
+                    backgroundColor: `rgb(0,${greencolor},0)`
+                })
+            }
+
+            rect.addEventListener("mouseenter", () => {
+                gsap.to(".box", {
+                    scale: 1.2,
+                    duration: 2,
+
+                })
+                document.body.style.backgroundColor = "white"
+            })
+            rect.addEventListener("mouseleave", () => {
+                gsap.to(".box", {
+                    scale: 1,
+                    duration: 2,
+                    backgroundColor: "white"
+                })
+                document.body.style.backgroundColor = "black"
+            })
+
+        })
+
+    </script>
+</body>
+
+</html>
