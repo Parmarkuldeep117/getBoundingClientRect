@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smooth GSAP Hover Trail</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            background-color: #111;
+        }
+
+        .box {
+            position: absolute;
+            display: flex;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            height: 200px;
+            width: 80vw;
+        }
+
+        .image {
+            overflow: hidden;
+            position: absolute;
+            height: 100px;
+            width: 100px;
+            border-radius: 12px;
+        }
+
+        .image img {
+            transform: translateY(100%);
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/all.min.js"
+        integrity="sha512-fxASHhXi6WjjUR9Hr8qt2IxNW2AzyZOpoPi4+UgVU0lTFNKMQ8INkZaQ5ZED2aAldHuHNaLlaHuwQ1oGT+LHhw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+        let body = document.querySelector("body");
+        let box = document.querySelector(".box");
+
+        box.addEventListener("mousemove", throttle((e) => {
+            // Create a new image wrapper
+            let div = document.createElement("div");
+            div.classList.add("image");
+            div.style.left = e.clientX + "px";
+            div.style.top = e.clientY + "px";
+            body.appendChild(div);
+
+            // Add the image inside
+            let img = document.createElement("img");
+            img.src = "https://plus.unsplash.com/premium_photo-1761953111449-baa0a316ab45?ixlib=rb-4.1.0&auto=format&fit=crop&q=60&w=600";
+            div.appendChild(img);
+
+            // Animate with GSAP
+            gsap.fromTo(img,
+                { y: "100%", opacity: 0 },
+                {
+                    y: "0%",
+                    opacity: 1,
+                    duration: 0.4,
+                    ease: "power2.out",
+                    onComplete: () => {
+                        gsap.to(img, {
+                            y: "-100%",
+                            opacity: 0,
+                            duration: 0.6,
+                            delay: 0.4,
+                            ease: "power1.inOut",
+                            onComplete: () => div.remove()
+                        });
+                    }
+                }
+            );
+
+        }, 100));
+
+        // throttle to prevent too many images spawning
+        function throttle(fnc, delay) {
+            let timer = 0;
+            return function (...args) {
+                let now = Date.now();
+                if (now - timer >= delay) {
+                    timer = now;
+                    fnc(...args);
+                }
+            };
+        }
+    </script>
+</body>
+
+</html>
